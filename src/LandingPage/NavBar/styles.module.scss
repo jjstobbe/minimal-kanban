@@ -1,0 +1,12 @@
+.navBar {
+  padding: 0.5rem;
+  background-color: black;
+
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+
+  & > a {
+    padding: 0.5rem;
+  }
+}

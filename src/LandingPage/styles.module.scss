@@ -1,0 +1,29 @@
+.mainContent {
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+
+  background-image: linear-gradient(to right, #2ecc71, #27ae60);
+
+  & > .welcome {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 1rem;
+    
+    & > .mainHeader {
+      font-size: 4rem;
+    }
+
+    & > .subheader {
+      font-size: 2rem;
+    }
+  }
+
+  & > .links > a {
+    margin: 0.5rem;
+  }
+}
