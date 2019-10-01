@@ -7,6 +7,9 @@ import mount from 'koa-mount';
 import cors from 'koa-cors';
 import HttpStatus from 'http-status';
 
+import graphqlHTTP from 'koa-graphql';
+import schema from './graphql/schema';
+
 const app = new Koa();
 const PORT = process.env.PORT || 3000;
 
@@ -33,6 +36,10 @@ router.get("/api/board",async (ctx,next)=>{
   await next();
 });
 
+router.all("/graphql", graphqlHTTP({
+  schema: schema,
+  graphiql: true
+}));
 
 app
   .use(router.routes())
