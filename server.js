@@ -1,13 +1,11 @@
-const Koa = require("koa");
-const BodyParser = require("koa-bodyparser");
-const Router = require("koa-router");
-const Logger = require("koa-logger");
-const serve = require("koa-static");
-const mount = require("koa-mount");
-const cors = require('koa-cors');
-const HttpStatus = require("http-status");
-
-import errorHandler from './middleware/error-handler';
+import Koa from 'koa';
+import BodyParser from 'koa-bodyparser';
+import Router from 'koa-router';
+import Logger from 'koa-logger';
+import serve from 'koa-static';
+import mount from 'koa-mount';
+import cors from 'koa-cors';
+import HttpStatus from 'http-status';
 
 const app = new Koa();
 const PORT = process.env.PORT || 3000;
@@ -15,25 +13,32 @@ const PORT = process.env.PORT || 3000;
 const static_pages = new Koa();
 static_pages.use(serve(__dirname + "/client/build"));
 
+// TODO Code-Split front-end bundle
+
 app
-    .use(errorHandler)
-    .use(mount("/", static_pages))
-    .use(BodyParser())
-    .use(Logger())
-    .use(cors());
+  .use(mount("/", static_pages))
+  .use(mount("/login", static_pages))
+  .use(mount("/register", static_pages))
+  .use(mount("/board", static_pages))
+  .use(BodyParser())
+  .use(Logger())
+  .use(cors());
 
 const router = new Router();
 
-router.get("/board",async (ctx,next)=>{
+router.get("/api/board",async (ctx,next)=>{
   const books = ["Speaking javascript", "Fluent Python", "Pro Python", "The Go programming language"];
   ctx.status = HttpStatus.OK;
   ctx.body = books;
   await next();
 });
 
-app.use(router.routes()).use(router.allowedMethods());
+
+app
+  .use(router.routes())
+  .use(router.allowedMethods());
 
 
 app.listen(PORT, function () {
-    console.log("==> 🌎  Listening on port %s. Visit http://localhost:%s/", PORT, PORT);
+    console.log(" ==> Listening on port %s. Visit http://localhost:%s/", PORT, PORT);
 });
