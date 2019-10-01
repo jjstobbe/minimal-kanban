@@ -8,7 +8,11 @@ import cors from 'koa-cors';
 import HttpStatus from 'http-status';
 
 import graphqlHTTP from 'koa-graphql';
-import schema from './graphql/schema';
+
+import schema from './middleware/graphql/schema';
+import initDB from './middleware/database/connect';
+
+initDB();
 
 const app = new Koa();
 const PORT = process.env.PORT || 3000;
