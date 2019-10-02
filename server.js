@@ -33,7 +33,7 @@ app
 
 const router = new Router();
 
-router.get("/api/board",async (ctx,next)=>{
+router.get("/api/board", async (ctx,next)=>{
   const books = ["Speaking javascript", "Fluent Python", "Pro Python", "The Go programming language"];
   ctx.status = HttpStatus.OK;
   ctx.body = books;
