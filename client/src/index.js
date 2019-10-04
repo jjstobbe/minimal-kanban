@@ -8,19 +8,23 @@ import { RegistrationPage } from './RegistrationPage';
 import { BoardPage } from './BoardPage';
 import { NotFoundPage } from './NotFoundPage';
 
-import { Route, BrowserRouter as Router, Switch } from 'react-router-dom'
+import graphqlClient from './graphql/graphqlClient';
+import { ApolloProvider } from '@apollo/react-hooks';
+import { Route, BrowserRouter as Router, Switch } from 'react-router-dom';
 import * as serviceWorker from './serviceWorker';
 
 const routing = (
-    <Router>
-        <Switch>
-            <Route exact path="/" component={LoginPage} />
-            <Route path="/login" component={LoginPage} />
-            <Route path="/register" component={RegistrationPage} />
-            <Route path="/board" component={BoardPage} />
-            <Route component={NotFoundPage} />
-        </Switch>
-    </Router>
+    <ApolloProvider client={graphqlClient}>
+        <Router>
+            <Switch>
+                <Route exact path="/" component={LoginPage} />
+                <Route path="/login" component={LoginPage} />
+                <Route path="/register" component={RegistrationPage} />
+                <Route path="/board" component={BoardPage} />
+                <Route component={NotFoundPage} />
+            </Switch>
+        </Router>
+    </ApolloProvider>
 )
 
 ReactDOM.render(routing, document.getElementById('root'));

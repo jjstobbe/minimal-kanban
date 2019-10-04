@@ -40,7 +40,7 @@ router.get("/api/board", async (ctx,next)=>{
   await next();
 });
 
-router.all("/graphql", graphqlHTTP({
+router.all("/api/graphql", graphqlHTTP({
   schema: schema,
   graphiql: true
 }));
