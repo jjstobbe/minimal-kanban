@@ -3,106 +3,31 @@ import { TaskColumn } from './taskColumn';
 import { DragDropContext } from "react-beautiful-dnd";
 import * as styles from './styles.module.scss';
 
-const data = [
-    {
-        title: 'Backlog',
-        id: '6134a',
-        tasks: [
-            {
-                id: 'asdfasdfg',
-                taskId: 'JS-123',
-                title: 'Task Title 1',
-                description: 'Some description....',
-                color: '#dfdfdf',
-                points: 3,
-            },
-            {
-                id: '32151235',
-                taskId: 'JS-123',
-                title: 'Task Title 2',
-                description: 'Some description....',
-                color: '#dfdfdf',
-                points: 3,
-                order: 1,
-            },
-            {
-                id: '624362347',
-                taskId: 'JS-123',
-                title: 'Task Title 3',
-                description: 'Some description....',
-                color: '#dfdfdf',
-                points: 3,
-                order: 2,
-            },
-        ]
-    },
-    {
-        title: 'In Progress',
-        id: '32a5',
-        tasks: [
-            {
-                id: '234623623462',
-                taskId: 'JS-123',
-                title: 'Some shit in prgoress Title',
-                description: 'Some 1 description....',
-                color: '#dfdfdf',
-                points: 3,
-            },
-            {
-                id: '162346',
-                taskId: 'JS-123',
-                title: 'Some shit in prgoress Title 2',
-                description: 'Some 2 description....',
-                color: '#dfdfdf',
-                points: 3,
-            },
-            {
-                id: '4327',
-                taskId: 'JS-123',
-                title: 'Some shit in prgoress Title 3',
-                description: 'Some 3 description....',
-                color: '#dfdfdf',
-                points: 3,
-            },
-        ]
-    },
-    {
-        title: 'Complete',
-        id: '12b34',
-        tasks: [
-            {
-                id: '17423',
-                taskId: 'JS-123',
-                title: 'Task Title 1',
-                description: 'Some description....',
-                color: '#dfdfdf',
-                points: 3,
-            },
-            {
-                id: '2345234534268856',
-                taskId: 'JS-123',
-                title: 'Task Title 2',
-                description: 'Some description....',
-                color: '#dfdfdf',
-                points: 3,
-            },
-            {
-                id: '7543734547',
-                taskId: 'JS-123',
-                title: 'Task Title 3',
-                description: 'Some description....',
-                color: '#dfdfdf',
-                points: 3,
-            },
-        ]
-    }
-];
+import { gql } from 'apollo-boost';
+import { useQuery } from '@apollo/react-hooks';
 
-const arrayToObjectDictionary = (array) =>
-   array.reduce((dict, item) => {
-     dict[item.id] = item
-     return dict
-   }, {})
+const BOARD_QUERY = gql`
+{
+    getBoardByBoardId (boardId: "5d96b1d276c1d44350e51b0b") {
+        title
+        id
+		tasks {
+			id
+			title
+			status
+        }
+    }  
+}
+`;
+
+const arrayToObjectDictionary = (array) => 
+    array.reduce((dict, item) => {
+        dict[item.id] = item
+        return dict
+    }, {})
+
+const dictionaryToObjectArray = (dict) =>
+    Object.keys(dict).map((k) => dict[k])
 
 const reorder = (array, startIndex, endIndex) => {
     const item = array[startIndex];
@@ -120,9 +45,24 @@ const insertItem = (array, index, newItem) => {
     return [...array.slice(0, index), newItem, ...array.slice(index)];
 }
 
+// const urlParams = new URLSearchParams(window.location.search);
+// const boardId = urlParams.get('id');
+
 export function BoardPage() {
-    const columnDictionary = arrayToObjectDictionary(data);
-    const [board, setBoard] = useState(columnDictionary);
+    const { loading, error, data, updateQuery } = useQuery(BOARD_QUERY);
+
+    if (loading) return <p>Loading...</p>;
+    if (error) return <p>Error :(</p>;
+
+    const updateBoard = (dict) => {
+        // Send backend request?
+
+        updateQuery(() => ({
+            getBoardByBoardId: dictionaryToObjectArray(dict),
+        }));
+    };
+
+    const board = arrayToObjectDictionary(data.getBoardByBoardId);
 
     const onDragEnd = (params) => {
         // Dropped outside of list
@@ -154,7 +94,7 @@ export function BoardPage() {
                 [params.source.droppableId]: updatedColumn
             }
             
-            setBoard(updatedBoard);
+            updateBoard(updatedBoard);
             return;
         }
 
@@ -174,8 +114,8 @@ export function BoardPage() {
             [params.destination.droppableId]: updatedDestinationColumn,
         }
 
-        setBoard(updatedBoard);
-    };
+        updateBoard(updatedBoard);
+    }
 
     return (
         <div className={styles.boardContainer}>

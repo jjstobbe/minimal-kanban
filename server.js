@@ -15,7 +15,7 @@ import initDB from './middleware/database/connect';
 initDB();
 
 const app = new Koa();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3001;
 
 const static_pages = new Koa();
 static_pages.use(serve(__dirname + "/client/build"));
@@ -32,13 +32,6 @@ app
   .use(cors());
 
 const router = new Router();
-
-router.get("/api/board", async (ctx,next)=>{
-  const books = ["Speaking javascript", "Fluent Python", "Pro Python", "The Go programming language"];
-  ctx.status = HttpStatus.OK;
-  ctx.body = books;
-  await next();
-});
 
 router.all("/api/graphql", graphqlHTTP({
   schema: schema,
