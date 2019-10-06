@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { TaskColumn } from './taskColumn';
 import { DragDropContext } from "react-beautiful-dnd";
 import * as styles from './styles.module.scss';
@@ -7,8 +7,8 @@ import { gql } from 'apollo-boost';
 import { useQuery } from '@apollo/react-hooks';
 
 const BOARD_QUERY = gql`
-{
-    getBoardByBoardId (boardId: "5d96b1d276c1d44350e51b0b") {
+query getBoard($boardId: String!) {
+    getBoardByBoardId(boardId: $boardId) {
         title
         id
 		tasks {
@@ -45,11 +45,13 @@ const insertItem = (array, index, newItem) => {
     return [...array.slice(0, index), newItem, ...array.slice(index)];
 }
 
-// const urlParams = new URLSearchParams(window.location.search);
-// const boardId = urlParams.get('id');
-
 export function BoardPage() {
-    const { loading, error, data, updateQuery } = useQuery(BOARD_QUERY);
+    const urlParams = new URLSearchParams(window.location.search);
+    const boardId = urlParams.get('id');
+
+    const { loading, error, data, updateQuery } = useQuery(BOARD_QUERY, {
+        variables: { boardId: boardId }
+    });
 
     if (loading) return <p>Loading...</p>;
     if (error) return <p>Error :(</p>;
@@ -93,7 +95,7 @@ export function BoardPage() {
                 ...board,
                 [params.source.droppableId]: updatedColumn
             }
-            
+
             updateBoard(updatedBoard);
             return;
         }
